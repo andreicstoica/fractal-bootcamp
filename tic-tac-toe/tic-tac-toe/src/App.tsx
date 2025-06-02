@@ -1,6 +1,11 @@
 import { useState } from 'react'
 import './App.css'
+import { Howl } from 'howler'
 import { initializeGame, move, type EndState, type Player} from './game/game'
+
+const sound = new Howl({
+  src: ['./assets/click.wav']
+})
 
 interface GameOverProps {
   endState: EndState;
@@ -76,9 +81,8 @@ function Game({ startingPlayer, onRestart }: GameProps) {
                 className='flex items-center justify-center border border-gray-500 bg-gray-200 hover:bg-gray-300' 
                 style={{ width: "3em", height: "3em", fontSize: "3rem", fontFamily: "Amarante"}}
                 onClick={() => {
-                  setGame((prev) =>
-                    move(prev, { row: rowIndex, col: colIndex })
-                  )
+                  setGame((prev) => move(prev, { row: rowIndex, col: colIndex }))
+                  sound.play();
                 }}
               >
                 {cell ? cell.toUpperCase() : ""}
