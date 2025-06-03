@@ -1,6 +1,6 @@
 # Simple Game
 
-## Overview
+## Assignment Overview
 
 Pick a Tic Tac Toe style game and build it from scratch in React. Good contenders for this project are 2-4 player games with simple positional rules and straightforward win conditions, like Connect4, Battleship, or Dots and Boxes.
 
