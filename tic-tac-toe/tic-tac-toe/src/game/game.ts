@@ -1,5 +1,5 @@
 // create game, board, etc.
-export type Player = 'x' | 'o' 
+export type Player = 'x' | 'o'
 type Cell = Player | null
 type CellCoord = {
   row: number,
@@ -13,14 +13,14 @@ type Game = {
   endState?: EndState
 }
 
-export const initializeGame = (): Game => {
+export const initializeGame = (startPlayer: Player): Game => {
   const game: Game = {
       board: [
         [null, null, null], 
         [null, null, null], 
         [null, null, null]
       ],
-      currentPlayer: 'x'
+      currentPlayer: startPlayer
   }
 
   return game
