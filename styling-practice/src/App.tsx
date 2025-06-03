@@ -2,6 +2,7 @@ import './App.css'
 //import { Task } from './components/Task'
 import { TaskList } from './components/TaskList'
 import { Messages } from './components/Messages'
+import { Post } from './components/Post'
 
 /*
 const exampleTask = {
@@ -71,12 +72,26 @@ const exampleTaskList =
     }
   ]
 
+  const postData = {
+    profile: {
+      avatar: avatar1,
+      name: 'Helena'
+    },
+    group: 'name',
+    time: '1 min ago',
+    img: '/public/assets/post.jpg',
+    postDescription: 'Post description',
+    likeCount: 21,
+    commentCount: 4
+  }
+
 function App() {
   return (
-    <div className='flex flex-col w-3/4 m-auto'>
+    <div className='w-3/4 mx-auto'>
       { /* <Task taskData={exampleTask} /> */ }
       { /* <TaskList initialTaskData={exampleTaskList} /> */ }
-      <Messages messageData={messageData} />
+      { /* <Messages messageData={messageData} /> */ }
+      <Post postData={postData}/>
     </div>
   )
 }
