@@ -1,27 +1,28 @@
 import clsx from 'clsx'
-import { useState } from 'react'
 
-interface TaskInfo {
-    title: string;
-    description: string;
+export interface TaskData {
+  id: number;
+  title: string;
+  description: string;
+  checked: boolean
 }
 
 type TaskProps = {
-  taskData: TaskInfo
+  taskData: TaskData
+  toggleChecked: () => void
 }
 
-export function Task({ taskData }: TaskProps) {
+export function Task({ taskData, toggleChecked }: TaskProps) {
   const title: string = taskData.title
   const description: string = taskData.description
-
-  const [checked, setChecked] = useState(false)
+  const checked: boolean = taskData.checked
 
   return(
-    <div className={clsx('flex flex-row py-3 px-4 max-w-1/2 w-full max-h-1/8 gap-3 items-center border-2 border-gray-200 rounded-lg', checked && 'bg-green-100')}>
-      <button className={clsx('aspect-square h-6 border-1 border-gray-300 rounded-lg', checked && 'bg-green-600')} onClick={() => setChecked(prev => !prev)} />
+    <div className={clsx('flex flex-row py-3 px-4 w-full max-w-1/2 max-h-1/4 gap-3 items-center border-1 border-borderGray rounded-lg', checked && 'bg-bgGreen')}>
+      <button className={clsx('aspect-square h-6 border-1 border-borderGray rounded-lg', checked && 'bg-selectGreen')} onClick={toggleChecked} />
       <div className='flex flex-col gap-1 font-[Inter]'>
         <div className='text-lg font-light'>{title}</div>
-        <div className='text-sm font-light text-gray-400'>{description}</div>
+        <div className='text-sm font-light text-textGray'>{description}</div>
       </div>
     </div>
   )

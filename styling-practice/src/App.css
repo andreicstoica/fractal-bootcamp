@@ -3,8 +3,8 @@
 
 /* NOT WORKING :( */
 @theme {
-  --textGray: #7D7D7D;
-  --outlineGray: #D8D8D8;
-  --bgGreen: #E2FFE5;
-  --selectGreen: #359845;
+  --color-textGray: #7D7D7D;
+  --color-borderGray: #D8D8D8;
+  --color-bgGreen: #E2FFE5;
+  --color-selectGreen: #359845;
 }
