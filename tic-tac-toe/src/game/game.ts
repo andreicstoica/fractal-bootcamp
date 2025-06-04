@@ -1,13 +1,15 @@
 // create game, board, etc.
 export type Player = 'x' | 'o'
 type Cell = Player | null
-type CellCoord = {
+export type CellCoord = {
   row: number,
   col: number,
 }
 type Board = Cell[][]
 export type EndState = Player | 'tie' | undefined
-type Game = {
+
+export type Game = {
+  id: string
   board: Board,
   currentPlayer: Player,
   endState?: EndState
@@ -15,12 +17,13 @@ type Game = {
 
 export const initializeGame = (startPlayer: Player): Game => {
   const game: Game = {
-      board: [
-        [null, null, null], 
-        [null, null, null], 
-        [null, null, null]
-      ],
-      currentPlayer: startPlayer
+    id: crypto.randomUUID(),
+    board: [
+      [null, null, null], 
+      [null, null, null], 
+      [null, null, null]
+    ],
+    currentPlayer: startPlayer
   }
 
   return game

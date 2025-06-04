@@ -1,11 +1,13 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import './App.css'
 import { Howl, Howler } from 'howler'
-import { initializeGame, move, type EndState, type Player} from './game/game'
+import { clsx } from 'clsx'
+import type { Game, EndState, Player, CellCoord} from './game/game'
+import { ClientTicTacToe } from './api'
 
 Howler.volume(1)
 const clickSound = new Howl({
-  src: ['/public/assets/click.wav'],
+  src: ['/assets/click.wav'],
   html5: true,
   preload: true
 })
@@ -24,10 +26,11 @@ function GameOver({ endState, onRestart }: GameOverProps) {
     message = `Congrats player ${endState.toUpperCase()}! Player ${endState.toUpperCase()} wins!`
   }
 
+  const buttonStyle = 'py-2.5 px-5 my-3 text-l font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100'
   return(
     <>
       <div className={'text-xl'}>{message}</div>
-      <button onClick={() => onRestart(null)} className='py-2.5 px-5 my-3 text-l font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100'>Restart?</button>
+      <button onClick={() => onRestart(null)} className={buttonStyle}>Restart?</button>
     </>
   )
 }
@@ -38,24 +41,26 @@ interface TurnProps {
 }
 
 function Turn({ currentPlayer, endState }: TurnProps) {
-  if (!endState) return(<div>Player turn: <span style={{ fontFamily: "Amarante" }}>{currentPlayer.toUpperCase()}</span></div>)
+  if (!endState) return(<div>Player turn: <span className={'font-[amarante]'}>{currentPlayer.toUpperCase()}</span></div>)
 }
 
 function App() {
-    const [startingPlayer, setStartingPlayer] = useState<Player | null>(null)
+  const [startingPlayer, setStartingPlayer] = useState<Player | null>(null)
 
-    if(!startingPlayer) return (
-      <div className='flex flex-col items-center justify-center h-screen space-y-4'>
-        <h1 className='text-2xl'>Welcome to Tic-Tac-Toe</h1>
-        <h2 className='text-xl'>Pick a player to begin:</h2>
-        <div>
-          <button type='button' style={{fontFamily: "Amarante"}} onClick={() => setStartingPlayer('x')} className='py-2.5 px-5 me-2 mb-2 text-2xl font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100'>X</button>
-          <button type='button' style={{fontFamily: "Amarante"}} onClick={() => setStartingPlayer('o')} className='py-2.5 px-5 me-2 mb-2 text-2xl font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100'>O</button>
-        </div>
+  const startPlayerButtonStyle = 'py-2.5 px-5 me-2 mb-2 text-2xl font-[amarante] font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100'
+  const centerStyle = 'flex flex-col items-center justify-center h-screen'
+  if(!startingPlayer) return (
+    <div className={clsx(centerStyle, 'space-y-4 font-[inter]')}>
+      <h1 className='text-2xl'>Welcome to Tic-Tac-Toe</h1>
+      <h2 className='text-xl'>Pick a player to begin:</h2>
+      <div>
+        <button type='button' onClick={() => setStartingPlayer('x')} className={startPlayerButtonStyle}>X</button>
+        <button type='button' onClick={() => setStartingPlayer('o')} className={startPlayerButtonStyle}>O</button>
       </div>
-    )
+    </div>
+  )
 
-    return <Game startingPlayer={startingPlayer} onRestart={setStartingPlayer}/>
+  return <Game startingPlayer={startingPlayer} onRestart={setStartingPlayer} />
 }
 
 interface GameProps {
@@ -64,28 +69,49 @@ interface GameProps {
 }
 
 function Game({ startingPlayer, onRestart }: GameProps) {
-  const [game, setGame] = useState(initializeGame(startingPlayer))
+  const [game, setGame] = useState<Game | undefined>()
+  const api = useMemo(() => new ClientTicTacToe(), [])
 
+  const startGame = useCallback(async () => {
+    const initialGame = await api.createGame(startingPlayer)
+    setGame(initialGame)
+  }, [api, startingPlayer])
+
+  useEffect(() => {
+    startGame()
+  }, [startingPlayer, startGame])
+
+  async function handleClick(coords: CellCoord) {
+    const newGame = await api.makeMove(game!.id, coords)
+    setGame(newGame)
+  }
+
+  const centerStyle = 'flex flex-col items-center justify-center'
+
+  if (!game) {
+    return <div className={clsx(centerStyle, 'text-[amarante] text-6xl')}>Loading...</div>
+  }
+  
   return (
-    <>
-      <div className="flex flex-col items-center font-inter">
+    <div className='flex flex-col justify-center h-screen gap-10'>
+      <div className="flex flex-col items-center font-[inter]">
         <h1 className="text-4xl font-bold py-6">Play Tic Tac Toe!</h1>
         <Turn currentPlayer={game.currentPlayer} endState={game.endState} />
         <br></br>
         <GameOver endState={game.endState} onRestart={onRestart}/>
       </div>
 
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center">
         {game.board.map((row, rowIndex) => (
           <div key={rowIndex} className="flex flex-col">
             {row.map((cell, colIndex) => (
               <div
                 key={colIndex}
-                className='flex items-center justify-center border border-gray-500 bg-gray-200 hover:bg-gray-300' 
-                style={{ width: "3em", height: "3em", fontSize: "3rem", fontFamily: "Amarante"}}
+                className={clsx(centerStyle, 'font-[amarante] w-[3em] h-[3em] text-5xl border border-gray-500 bg-gray-200 hover:bg-gray-300')} 
+                //className='flex items-center justify-center border border-gray-500 bg-gray-200 hover:bg-gray-300 w-[3em] h-[3em]'
                 onClick={() => {
                   clickSound.play();
-                  setGame((prev) => move(prev, { row: rowIndex, col: colIndex }))
+                  handleClick({ row: rowIndex, col: colIndex })
                 }}
               >
                 {cell ? cell.toUpperCase() : ""}
@@ -94,7 +120,7 @@ function Game({ startingPlayer, onRestart }: GameProps) {
           </div>
         ))}
       </div>
-    </>
+    </div>
   )
 }
 
