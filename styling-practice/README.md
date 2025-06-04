@@ -25,10 +25,9 @@ Create 6 pixel-perfect components in React. Create a PR for each component. Use 
 
 Build the components from [this figma](https://www.figma.com/design/9x5JatG37qfMprBrHzEm8C/Week-One---Styling---Storybook-Components?node-id=0-1&t=I8jjLbC7lECsudmt-1)
 
-- [X] Task  
-- [X] Task List  
-- [X] Message Thread  
-- [ ] Post  
+- [x] Task List  
+- [x] Message Thread  
+- [x] Post 
 - [ ] Heat Grid  
 - [ ] Tab Descriptor
 
@@ -56,4 +55,3 @@ Bonus:
 ## Inspiration
 
 - [https://main--5d559397bae39100201eedc1.chromatic.com/](https://main--5d559397bae39100201eedc1.chromatic.com/)  
-- [https://master--628d031b55e942004ac95df1.chromatic.com/](https://master--628d031b55e942004ac95df1.chromatic.com/)
