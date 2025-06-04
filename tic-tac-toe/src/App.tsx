@@ -5,7 +5,7 @@ import { clsx } from 'clsx'
 import type { Game, EndState, Player, CellCoord} from './game/game'
 import { ClientTicTacToe } from './api'
 
-Howler.volume(1)
+Howler.volume(.75)
 const clickSound = new Howl({
   src: ['/assets/click.wav'],
   html5: true,
@@ -19,6 +19,7 @@ const victorySound = new Howl({
 
 const backgroundStyle = 'bg-gradient-to-tr from-violet-100 via-slate-50 to-teal-100'
 const centerStyle = 'flex flex-col items-center justify-center'
+const hoverStyle = 'hover:bg-gray-200 hover:shadow-[inset_1px_1px_10px_0px_#ffa1ad,inset_-1px_-1px_10px_0px_#ffa1ad]'
 
 function App() {
   const [startingPlayer, setStartingPlayer] = useState<Player | null>(null)
@@ -29,8 +30,8 @@ function App() {
       <h1 className='text-2xl'>Welcome to Tic-Tac-Toe</h1>
       <h2 className='mt-2 animate-pulse text-xl'>Pick a player to begin:</h2>
       <div className=''>
-        <button type='button' onClick={() => setStartingPlayer('x')} className={startPlayerButtonStyle}>X</button>
-        <button type='button' onClick={() => setStartingPlayer('o')} className={startPlayerButtonStyle}>O</button>
+        <button type='button' onClick={() => setStartingPlayer('x')} className={clsx(startPlayerButtonStyle, 'text-sky-500')}>X</button>
+        <button type='button' onClick={() => setStartingPlayer('o')} className={clsx(startPlayerButtonStyle, 'text-rose-500')}>O</button>
       </div>
     </div>
   )
@@ -69,7 +70,9 @@ function Game({ startingPlayer, onRestart }: GameProps) {
   if (!game) {
     return <div className={clsx(centerStyle, 'text-[amarante] text-6xl')}>Loading...</div>
   }
-  
+
+  const cellStyle = 'border border-gray-500 bg-gray-200 font-[amarante] w-[3em] h-[3em] text-5xl'
+
   return (
     <div className={clsx(centerStyle, backgroundStyle, 'h-screen gap-10')}>
       <div className="flex flex-col items-center font-[inter]">
@@ -85,7 +88,7 @@ function Game({ startingPlayer, onRestart }: GameProps) {
             {row.map((cell, colIndex) => (
               <div
                 key={colIndex}
-                className={clsx(centerStyle, 'font-[amarante] w-[3em] h-[3em] text-5xl border border-gray-500 bg-gray-200 hover:bg-gray-300')} 
+                className={clsx(centerStyle, hoverStyle, cellStyle, {'text-sky-500': cell === 'x'}, {'text-rose-500': cell === 'o'})} 
                 onClick={() => {
                   clickSound.play();
                   handleClick({ row: rowIndex, col: colIndex })
@@ -132,7 +135,8 @@ interface TurnProps {
 }
 
 function Turn({ currentPlayer, endState }: TurnProps) {
-  if (!endState) return(<div className='text-xl'>Player turn: <span className={'font-[amarante]'}>{currentPlayer.toUpperCase()}</span></div>)
+  const turnStyle = clsx({'text-sky-500': currentPlayer === 'x'}, {'text-rose-500': currentPlayer === 'o'}, 'font-[amarante]')
+  if (!endState) return(<div className='text-xl'>Player turn: <span className={turnStyle}>{currentPlayer.toUpperCase()}</span></div>)
 }
 
 export default App
