@@ -1,11 +1,12 @@
 import express from "express";
 import ViteExpress from "vite-express";
-import { MemoryTicTacToeApi } from './src/api.ts'
+//import { MemoryTicTacToeApi } from './src/api.ts'
+import { DbTicTacToeApi } from './src/db/db'
 
 const app = express();
 app.use(express.json())
 
-const api = new MemoryTicTacToeApi()
+const api = new DbTicTacToeApi()
 
 app.get("/message", (_, res) => res.send("Hello from express!"));
 
