@@ -1,6 +1,8 @@
 import './App.css'
 //import { Task } from './components/Task'
 import { TaskList } from './components/TaskList'
+import { Messages } from './components/Messages'
+import { Post } from './components/Post'
 
 /*
 const exampleTask = {
@@ -40,12 +42,56 @@ const exampleTaskList =
   ]
 
 
-function App() {
+  const avatar1: string = '/public/assets/avatar1.png'
+  const avatar2: string = '/public/assets/avatar2.png'
+  const messageData = [
+    {
+      isMe: true,
+      avatar: avatar1,
+      text: "I just completed my first 10k run this morning, and I feel amazing! It was a bit of a struggle towards the end, but pushing through the last kilometer was so rewarding. Now, I'm enjoying a big breakfast to refuel. If anyone wants to join me for a run next week, let me know!"
+    },
+    {
+      isMe: true,
+      avatar: avatar1,
+      text: "I'm planning a weekend getaway to the mountains and can't wait to disconnect from the hustle and bustle of city life. I've booked a cozy cabin with a fireplace, and I'm looking forward to some hiking, stargazing, and simply enjoying the peace and quiet. "
+    },
+    {
+      isMe: true,
+      avatar: avatar1,
+      text: "I'm planning a weekend getaway to the mountains and can't wait to disconnect from the hustle and bustle of city life. I've booked a cozy cabin with a fireplace, and I'm looking forward to some hiking, stargazing, and simply enjoying the peace and quiet. "
+    },
+    {
+      isMe: false,
+      avatar: avatar2,
+      text: "I've decided to take up a new hobby and start learning how to play the piano. It's something I've always wanted to do, and I finally signed up for lessons. The first few sessions have been challenging, but I love the feeling of progress with each practice."
+    },
+    {
+      isMe: true,
+      avatar: avatar1,
+      text: "I just completed my first 10k run this morning, and I feel amazing! It was a bit of a struggle towards the end, but pushing through the last kilometer was so rewarding. Now, I'm enjoying a big breakfast to refuel. If anyone wants to join me for a run next week, let me know!"
+    }
+  ]
 
+  const postData = {
+    profile: {
+      avatar: avatar1,
+      name: 'Helena'
+    },
+    group: 'name',
+    time: '1 min ago',
+    img: '/public/assets/post.jpg',
+    postDescription: 'Post description',
+    likeCount: 21,
+    commentCount: 4
+  }
+
+function App() {
   return (
-    <div className='flex flex-col items-center'>
+    <div className='w-3/4 mx-auto'>
       { /* <Task taskData={exampleTask} /> */ }
-      <TaskList initialTaskData={exampleTaskList} />
+      { /* <TaskList initialTaskData={exampleTaskList} /> */ }
+      { /* <Messages messageData={messageData} /> */ }
+      <Post postData={postData}/>
     </div>
   )
 }
