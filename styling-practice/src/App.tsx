@@ -3,6 +3,7 @@ import './App.css'
 import { TaskList } from './components/TaskList'
 import { Messages } from './components/Messages'
 import { Post } from './components/Post'
+import { Heatmap } from './components/Heatmap'
 
 /*
 const exampleTask = {
@@ -85,13 +86,24 @@ const exampleTaskList =
     commentCount: 4
   }
 
+  const heatmapData =
+  [
+    [0, 1, 2, 3, 3, 3, 3],
+    [0, 1, 2, 3, 3, 3, 3],
+    [0, 1, 2, 3, 3, 3, 3],
+    [0, 1, 2, 3, 3, 3, 3],
+    [0, 1, 2, 3, 3, 3, 3]
+  ]
+
+
 function App() {
   return (
     <div className='w-3/4 mx-auto'>
-      { /* <Task taskData={exampleTask} /> */ }
-      { /* <TaskList initialTaskData={exampleTaskList} /> */ }
-      { /* <Messages messageData={messageData} /> */ }
-      <Post postData={postData}/>
+      {/* <Task taskData={exampleTask} /> */}
+      {/* <TaskList initialTaskData={exampleTaskList} /> */}
+      {/* <Messages messageData={messageData} /> */}
+      {/* <Post postData={postData} /> */}
+      <Heatmap heatmapData={heatmapData} />
     </div>
   )
 }
