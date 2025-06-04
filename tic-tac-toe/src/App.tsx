@@ -71,11 +71,12 @@ function Game({ startingPlayer, onRestart }: GameProps) {
     return <div className={clsx(centerStyle, 'text-[amarante] text-6xl')}>Loading...</div>
   }
 
+  const headerStyle = 'p-7 border-4 border-double bg-gray-200 bg-gradient-to-r from-sky-100 via-rose-100 to-sky-100 animate-gradient bg-[length:400%_400%]'
   const cellStyle = 'border border-gray-500 bg-gray-200 font-[amarante] w-[3em] h-[3em] text-5xl'
 
   return (
     <div className={clsx(centerStyle, backgroundStyle, 'h-screen gap-10')}>
-      <div className="flex flex-col items-center font-[inter]">
+      <div className={clsx(headerStyle, 'flex flex-col items-center font-[inter]')}> 
         <h1 className="text-4xl font-bold py-6">Play Tic Tac Toe!</h1>
         <Turn currentPlayer={game.currentPlayer} endState={game.endState} />
         <br></br>
