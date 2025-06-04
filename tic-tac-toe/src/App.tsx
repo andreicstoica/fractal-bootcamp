@@ -12,48 +12,19 @@ const clickSound = new Howl({
   preload: true
 })
 
-interface GameOverProps {
-  endState: EndState;
-  onRestart: Function;
-}
+const backgroundStyle = 'bg-gradient-to-tr from-violet-100 via-slate-50 to-teal-100'
+const centerStyle = 'flex flex-col items-center justify-center'
 
-function GameOver({ endState, onRestart }: GameOverProps) {
-  let message: string
-  if (!endState) return null
-  if (endState === 'tie') {
-    message = "Wow, what an exciting matchup, the game ends in a tie!"
-  } else {
-    message = `Congrats player ${endState.toUpperCase()}! Player ${endState.toUpperCase()} wins!`
-  }
-
-  const buttonStyle = 'py-2.5 px-5 my-3 text-l font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100'
-  return(
-    <>
-      <div className={'text-xl'}>{message}</div>
-      <button onClick={() => onRestart(null)} className={buttonStyle}>Restart?</button>
-    </>
-  )
-}
-
-interface TurnProps {
-  currentPlayer: Player;
-  endState: EndState;
-}
-
-function Turn({ currentPlayer, endState }: TurnProps) {
-  if (!endState) return(<div>Player turn: <span className={'font-[amarante]'}>{currentPlayer.toUpperCase()}</span></div>)
-}
 
 function App() {
   const [startingPlayer, setStartingPlayer] = useState<Player | null>(null)
 
   const startPlayerButtonStyle = 'py-2.5 px-5 me-2 mb-2 text-2xl font-[amarante] font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100'
-  const centerStyle = 'flex flex-col items-center justify-center h-screen'
   if(!startingPlayer) return (
-    <div className={clsx(centerStyle, 'space-y-4 font-[inter]')}>
+    <div className={clsx(centerStyle, backgroundStyle, 'h-screen space-y-4 font-[inter]')}>
       <h1 className='text-2xl'>Welcome to Tic-Tac-Toe</h1>
-      <h2 className='text-xl'>Pick a player to begin:</h2>
-      <div>
+      <h2 className='mt-2 animate-pulse text-xl'>Pick a player to begin:</h2>
+      <div className=''>
         <button type='button' onClick={() => setStartingPlayer('x')} className={startPlayerButtonStyle}>X</button>
         <button type='button' onClick={() => setStartingPlayer('o')} className={startPlayerButtonStyle}>O</button>
       </div>
@@ -65,6 +36,7 @@ function App() {
 
 interface GameProps {
   startingPlayer: Player;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   onRestart: Function;
 }
 
@@ -86,14 +58,12 @@ function Game({ startingPlayer, onRestart }: GameProps) {
     setGame(newGame)
   }
 
-  const centerStyle = 'flex flex-col items-center justify-center'
-
   if (!game) {
     return <div className={clsx(centerStyle, 'text-[amarante] text-6xl')}>Loading...</div>
   }
   
   return (
-    <div className='flex flex-col justify-center h-screen gap-10'>
+    <div className={clsx(centerStyle, backgroundStyle, 'h-screen gap-10')}>
       <div className="flex flex-col items-center font-[inter]">
         <h1 className="text-4xl font-bold py-6">Play Tic Tac Toe!</h1>
         <Turn currentPlayer={game.currentPlayer} endState={game.endState} />
@@ -108,7 +78,6 @@ function Game({ startingPlayer, onRestart }: GameProps) {
               <div
                 key={colIndex}
                 className={clsx(centerStyle, 'font-[amarante] w-[3em] h-[3em] text-5xl border border-gray-500 bg-gray-200 hover:bg-gray-300')} 
-                //className='flex items-center justify-center border border-gray-500 bg-gray-200 hover:bg-gray-300 w-[3em] h-[3em]'
                 onClick={() => {
                   clickSound.play();
                   handleClick({ row: rowIndex, col: colIndex })
@@ -122,6 +91,39 @@ function Game({ startingPlayer, onRestart }: GameProps) {
       </div>
     </div>
   )
+}
+
+interface GameOverProps {
+  endState: EndState;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  onRestart: Function;
+}
+
+function GameOver({ endState, onRestart }: GameOverProps) {
+  let message: string
+  if (!endState) return null
+  if (endState === 'tie') {
+    message = "Wow, what an exciting matchup, the game ends in a tie!"
+  } else {
+    message = `Congrats player ${endState.toUpperCase()}! Player ${endState.toUpperCase()} wins!`
+  }
+
+  const buttonStyle = 'py-2.5 px-5 my-3 text-l font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100'
+  return(
+    <>
+      <div className={'text-xl'}>{message}</div>
+      <button onClick={() => onRestart(null)} className={clsx(buttonStyle, 'mt-5 animate-pulse')}>Restart?</button>
+    </>
+  )
+}
+
+interface TurnProps {
+  currentPlayer: Player;
+  endState: EndState;
+}
+
+function Turn({ currentPlayer, endState }: TurnProps) {
+  if (!endState) return(<div>Player turn: <span className={'font-[amarante]'}>{currentPlayer.toUpperCase()}</span></div>)
 }
 
 export default App
