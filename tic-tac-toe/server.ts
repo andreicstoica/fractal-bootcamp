@@ -20,7 +20,7 @@ app.get("/api/game/:id", async (req, res) => {
 })
 
 app.post("/api/game/:id/move", async (req, res) => {
-  console.log('test?');
+  //console.log('test?');
   const game = await api.makeMove(req.params.id, req.body.coords)
   res.json(game)
 })
