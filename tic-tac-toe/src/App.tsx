@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 import { Howl, Howler } from 'howler'
 import { clsx } from 'clsx'
@@ -53,8 +53,12 @@ function Game({ startingPlayer, onRestart }: GameProps) {
     setGame(initialGame)
   }, [api, startingPlayer])
 
+  const effectRan = useRef(false);
   useEffect(() => {
-    startGame()
+    if (!effectRan.current) {
+      startGame()
+    }
+    return () => effectRan.current = true
   }, [startingPlayer, startGame])
 
   async function handleClick(coords: CellCoord) {

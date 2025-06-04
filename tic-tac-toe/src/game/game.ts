@@ -5,11 +5,11 @@ export type CellCoord = {
   row: number,
   col: number,
 }
-type Board = Cell[][]
+export type Board = Cell[][]
 export type EndState = Player | 'tie' | undefined
 
 export type Game = {
-  id: string
+  id: string,
   board: Board,
   currentPlayer: Player,
   endState?: EndState
