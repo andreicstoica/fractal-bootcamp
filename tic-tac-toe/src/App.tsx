@@ -11,10 +11,14 @@ const clickSound = new Howl({
   html5: true,
   preload: true
 })
+const victorySound = new Howl({
+  src: ['/assets/victory.mp3'],
+  html5: true,
+  preload: true
+})
 
 const backgroundStyle = 'bg-gradient-to-tr from-violet-100 via-slate-50 to-teal-100'
 const centerStyle = 'flex flex-col items-center justify-center'
-
 
 function App() {
   const [startingPlayer, setStartingPlayer] = useState<Player | null>(null)
@@ -108,6 +112,7 @@ function GameOver({ endState, onRestart }: GameOverProps) {
     message = `Congrats player ${endState.toUpperCase()}! Player ${endState.toUpperCase()} wins!`
   }
 
+  victorySound.play()
   const buttonStyle = 'py-2.5 px-5 my-3 text-l font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100'
   return(
     <>

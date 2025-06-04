@@ -68,7 +68,7 @@ const checkEnd = (game: Game): EndState => {
     const oCount: number =  row.filter(cell => cell === 'o').length
 
     if (xCount === 3 || oCount === 3) {
-      console.log('complete in cols')
+      //console.log('complete in cols')
       return game.currentPlayer
     }
   }
@@ -79,7 +79,7 @@ const checkEnd = (game: Game): EndState => {
     const oCount: number = col.filter(cell => cell ==='o').length
 
     if (xCount === 3 || oCount === 3) {
-      console.log('complete in rows');
+      //console.log('complete in rows');
       return game.currentPlayer
     } 
   }
@@ -88,13 +88,13 @@ const checkEnd = (game: Game): EndState => {
   // first diagonal
   const firstDiag: Cell[] = [board[0][0], board[1][1],  board[2][2]]
   if (firstDiag.filter(cell => cell === 'x').length === 3 || firstDiag.filter(cell => cell === 'o').length === 3 ) {
-    console.log('complete in first diag');
+    //console.log('complete in first diag');
     return game.currentPlayer
   }
   // backwards diagonal
   const backDiag: Cell[] = [board[2][0], board[1][1],  board[0][2]]
   if (backDiag.filter(cell => cell === 'x').length === 3 || firstDiag.filter(cell => cell === 'o').length === 3 ) {
-    console.log('complete in back diag');
+    //console.log('complete in back diag');
     return game.currentPlayer
   }
 
