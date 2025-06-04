@@ -75,7 +75,7 @@ function Game({ startingPlayer, onRestart }: GameProps) {
         <GameOver endState={game.endState} onRestart={onRestart}/>
       </div>
 
-      <div className="flex justify-center">
+      <div className="flex justify-center shadow-md">
         {game.board.map((row, rowIndex) => (
           <div key={rowIndex} className="flex flex-col">
             {row.map((cell, colIndex) => (
@@ -128,7 +128,7 @@ interface TurnProps {
 }
 
 function Turn({ currentPlayer, endState }: TurnProps) {
-  if (!endState) return(<div>Player turn: <span className={'font-[amarante]'}>{currentPlayer.toUpperCase()}</span></div>)
+  if (!endState) return(<div className='text-xl'>Player turn: <span className={'font-[amarante]'}>{currentPlayer.toUpperCase()}</span></div>)
 }
 
 export default App
