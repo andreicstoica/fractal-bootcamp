@@ -7,4 +7,7 @@ export default defineConfig({
   plugins: [
     react(), 
     tailwindcss()],
+  test: {
+    include: ['src/tests/**/*.ts'], // This line tells Vitest to look in src/tests and its subdirectories
+  },
 })
