@@ -1,9 +1,9 @@
 import { drizzle } from 'drizzle-orm/postgres-js'
 import 'dotenv/config';
-import { eq } from 'drizzle-orm';
+import { eq, isNull } from 'drizzle-orm';
 import { gamesTable } from './schema';
 import type { TicTacToeApi } from '../api';
-import type { Player, Game, CellCoord, EndState } from '../game/game';
+import type { Player, Game, CellCoord, EndState, Board } from '../game/game';
 import { initializeGame, move } from '../game/game';
 
 const db = drizzle(process.env.DATABASE_URL!);
@@ -25,6 +25,20 @@ export class DbTicTacToeApi implements TicTacToeApi {
 
     await db.update(gamesTable).set(values).where(eq(gamesTable.id, id))
     return newGame
+  }
+
+  async getGames(): Promise<Game[]> {
+    const results = await db.select()
+      .from(gamesTable)
+      .where(isNull(gamesTable.endState))
+      .limit(10)
+    
+    return results.map(game => ({
+      id: game.id,
+      board: game.board as Board,
+      currentPlayer: game.currentPlayer as Player,
+      endState: game.endState as EndState
+    }))
   }
 
   async getGame(id: string): Promise<Game> {
