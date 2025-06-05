@@ -57,9 +57,6 @@ const checkEnd = (game: Game): EndState => {
       if (cell) playedCells = playedCells + 1
     }
   }
-  if (playedCells === 9) {
-    return 'tie'
-  }
 
   /// WIN SCENARIOS ///
   // any col is complete for a player 
@@ -96,6 +93,10 @@ const checkEnd = (game: Game): EndState => {
   if (backDiag.filter(cell => cell === 'x').length === 3 || firstDiag.filter(cell => cell === 'o').length === 3 ) {
     //console.log('complete in back diag');
     return game.currentPlayer
+  }
+
+  if (playedCells === 9) {
+    return 'tie'
   }
 
   // else, return undefined to continue playing
