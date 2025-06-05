@@ -4,6 +4,7 @@ import { initializeGame, move } from './game/game'
 export interface TicTacToeApi {
   createGame(startingPlayer: Player): Promise<Game>,
   getGame(id: string): Promise<Game>,
+  getGames(): Promise<Game[]>,
   makeMove(id: string, coords: CellCoord): Promise<Game>
 }
 
@@ -27,6 +28,16 @@ export class MemoryTicTacToeApi implements TicTacToeApi {
     return foundGame
   }
 
+  async getGames(): Promise<Game[]> {
+    const gamesList = Array.from(this.games.values())
+
+    if (gamesList.length === 0) {
+      throw new Error("No games :( uhoh")
+    }
+
+    return gamesList
+  }
+
   async makeMove(id: string, coords: CellCoord): Promise<Game> {
     const foundGame = await this.getGame(id)
     const newGame = move(foundGame, coords)
@@ -37,6 +48,7 @@ export class MemoryTicTacToeApi implements TicTacToeApi {
 }
 
 export class ClientTicTacToe implements TicTacToeApi {
+  
   async createGame(startingPlayer: Player): Promise<Game> {
     const response = await fetch("/api/game", {
       method: "POST",
@@ -54,6 +66,12 @@ export class ClientTicTacToe implements TicTacToeApi {
     const response = await fetch(`/api/game/${id}`)
     const game = await response.json()
     return game
+  }
+
+  async getGames(): Promise<Game[]> {
+    const response = await fetch('/api/games')
+    const games = await response.json()
+    return games
   }
 
   async makeMove(id: string, coords: CellCoord): Promise<Game> {
