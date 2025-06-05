@@ -50,12 +50,12 @@ export function Lobby() {
   return (
     <div className="flex flex-col items-center p-4 font-[inter]">
       <h2 className="text-xl font-bold">GAME LOBBY</h2>
-      <h3 className="text-lg font-medium">~ MAKE A GAME ~</h3>
+      <h3 className="text-lg font-medium">MAKE A GAME</h3>
       <div className="flex flex-row p-2 gap-2">
         <button className={buttonStyle} onClick={startGame('x')}>X</button>
         <button className={buttonStyle} onClick={startGame('o')}>O</button>
       </div>
-      <h3 className="text-lg font-medium">~ ALL THE GAMES ~</h3>
+      <h3 className="text-lg font-medium">JOIN A GAME</h3>
       <ul className="p-0 m-0 w-fit mx-auto">
         {games.map(game => (
           <li className="list-decimal text-blue-500 hover:underline"><Link to={`/game/${game.id}`}>{generateGameName()}</Link></li>

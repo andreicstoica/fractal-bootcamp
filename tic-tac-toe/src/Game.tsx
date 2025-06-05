@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type JSX } from "react";
 import { useLoaderData, useNavigate } from "react-router";
 
 import { Howl, Howler } from 'howler'
@@ -9,7 +9,6 @@ import { ClientTicTacToe } from "./api";
 
 const centerStyle = 'flex flex-col items-center justify-center'
 const hoverStyle = 'hover:bg-gray-200 hover:shadow-[inset_1px_1px_10px_0px_#ffa1ad,inset_-1px_-1px_10px_0px_#ffa1ad]'
-//const backgroundStyle = 'bg-gradient-to-tr from-violet-100 via-slate-50 to-teal-100'
 
 Howler.volume(.75)
 const clickSound = new Howl({
@@ -39,7 +38,6 @@ export function Game() {
     return <div className={clsx(centerStyle, 'text-[amarante] text-6xl')}>Loading...</div>
   }
 
-  //const headerStyle = 'p-7 border-4 border-double bg-gray-200 bg-gradient-to-r from-sky-100 via-rose-100 to-sky-100 animate-gradient bg-[length:400%_400%]'
   const cellStyle = 'border border-gray-500 bg-gray-200 font-[amarante] w-[3em] h-[3em] text-5xl'
 
   return (
@@ -90,20 +88,37 @@ interface GameOverProps {
 }
 
 function GameOver({ endState, onRestart }: GameOverProps) {
-  let message: string
+  let message: JSX.Element | null = null
+  const winnerStyle = clsx({'text-sky-500': endState === 'x'}, {'text-rose-500': endState === 'o'}, 'font-[amarante] text-xl')
+
   if (!endState) return null
   if (endState === 'tie') {
-    message = "Wow, what an exciting matchup, the game ends in a tie!"
+    message = <div>Wow, what an exciting matchup, the game ends in a tie!</div>;
   } else {
-    message = `Congrats player ${endState.toUpperCase()}! Player ${endState.toUpperCase()} wins!`
+  // If endState is 'x' or 'o', construct JSX for the winner message
+    message = (
+      <div>
+        Congrats player{' '}
+        <span className={winnerStyle}>
+          {endState.toUpperCase()}
+        </span>
+        ! Player{' '}
+        <span className={winnerStyle}>
+          {endState.toUpperCase()}
+        </span>
+        {' '}wins!
+      </div>
+    )
   }
 
+  const winnerElement = <div className="font-[inter] text-xl font-medium">{message}</div>
   victorySound.play()
   const buttonStyle = 'py-2.5 px-5 my-3 text-l font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100'
+  
   return(
     <div className="flex flex-col">
-      <div className={'text-xl'}>{message}</div>
-      <button onClick={() => onRestart(null)} className={clsx(buttonStyle, 'animate-pulse')}>Restart?</button>
+      {winnerElement}
+      <button onClick={() => onRestart()} className={clsx(buttonStyle, 'animate-pulse')}>Play Again?</button>
     </div>
   )
 }
