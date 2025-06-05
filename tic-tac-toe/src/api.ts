@@ -1,5 +1,4 @@
 import type { Game, CellCoord, Player } from './game/game'
-import { initializeGame, move } from './game/game'
 
 export interface TicTacToeApi {
   createGame(startingPlayer: Player): Promise<Game>,
@@ -8,6 +7,7 @@ export interface TicTacToeApi {
   makeMove(id: string, coords: CellCoord): Promise<Game>
 }
 
+/*
 export class MemoryTicTacToeApi implements TicTacToeApi {
 
   private games: Map<string, Game> = new Map()
@@ -47,6 +47,7 @@ export class MemoryTicTacToeApi implements TicTacToeApi {
     return newGame
   }
 }
+*/
 
 export const BASE_URL = "http://localhost:3000"
 
@@ -58,7 +59,7 @@ export class ClientTicTacToe implements TicTacToeApi {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({startingPlayer})
+      body: JSON.stringify({ startingPlayer })
     })
     
     const game = await response.json()

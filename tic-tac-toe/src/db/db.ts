@@ -12,7 +12,7 @@ export class DbTicTacToeApi implements TicTacToeApi {
 
   async createGame(startingPlayer: Player): Promise<Game> {
     const newGame = initializeGame(startingPlayer)
-    const values: typeof gamesTable.$inferInsert = newGame
+    const values : typeof gamesTable.$inferInsert = newGame
     await db.insert(gamesTable).values(values)
     return newGame
   }
@@ -35,6 +35,7 @@ export class DbTicTacToeApi implements TicTacToeApi {
     
     return results.map(game => ({
       id: game.id,
+      name: game.name,
       board: game.board as Board,
       currentPlayer: game.currentPlayer as Player,
       endState: game.endState as EndState
@@ -54,10 +55,10 @@ export class DbTicTacToeApi implements TicTacToeApi {
 
     return {
       id: foundGame.id,
+      name: foundGame.name,
       board: foundGame.board,
       currentPlayer: foundGame.currentPlayer as Player,
       endState: foundGame.endState as EndState
     }
   }
-
 }
