@@ -1,13 +1,12 @@
 // create game, board, etc.
 export type Player = 'x' | 'o'
-type Cell = Player | null
+export type Cell = Player | null
 export type CellCoord = {
   row: number,
   col: number,
 }
 export type Board = Cell[][]
 export type EndState = Player | 'tie' | undefined
-
 export type Game = {
   id: string,
   name: string,
