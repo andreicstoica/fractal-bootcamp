@@ -1,11 +1,12 @@
-import { useState, type JSX } from "react";
+import { useEffect, useState, type JSX } from "react";
 import { useLoaderData, useNavigate } from "react-router";
 
 import { Howl, Howler } from 'howler'
 import clsx from "clsx";
+import { io } from "socket.io-client"
 
 import type { Game, Player, CellCoord, EndState } from "./game/game";
-import { ClientTicTacToe } from "./api";
+import { BASE_URL, ClientTicTacToe } from "./api";
 
 const centerStyle = 'flex flex-col items-center justify-center'
 const hoverStyle = 'hover:bg-gray-200 hover:shadow-[inset_1px_1px_10px_0px_#ffa1ad,inset_-1px_-1px_10px_0px_#ffa1ad]'
@@ -27,7 +28,27 @@ const api = new ClientTicTacToe()
 export function Game() {
   const { foundGame: foundGame } = useLoaderData<{ foundGame: Game }>()
   const [game, setGame] = useState<Game>(foundGame)
-    const navigate = useNavigate()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const socket = io(BASE_URL);
+    socket.on("connect", () => {
+      //console.log('connected to socket')
+      socket.emit("join-game", game.id)
+      /*
+      socket.on('user-joined', (userId: string) => {
+        console.log(`user ${userId} joined`);
+      })
+      */
+      socket.on('game-updated', (game: Game) => {
+        //console.log('game updated')
+        setGame(game)
+      })
+
+    })
+
+    return () => socket.disconnect()
+  }, [game.id])
 
   async function handleClick(coords: CellCoord) {
     const newGame = await api.makeMove(game!.id, coords)
