@@ -5,6 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "bun run --watch server.ts",
+    "prod": "bun run server.ts",
+    "docker:build": "docker build -t bun_backend_image .",
+    "docker:run": "docker run -p 8000:3000 bun_backend_image",
     "vite": "vite",
     "test": "vitest",
     "build": "tsc -b && vite build",

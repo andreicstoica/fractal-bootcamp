@@ -6,7 +6,7 @@ import { Game } from "./src/game/game";
 
 const app = express();
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "*",
   methods: ['GET', 'POST']
 }))
 app.use(express.json())
@@ -16,11 +16,11 @@ const api = new DbTicTacToeApi()
 const makeRoomId = (game: Game) => `game-${game.id}`
 
 const PORT = parseInt(process.env.PORT || "3000");
-const server = app.listen(PORT, () => console.log("Server is listening..."))
+const server = app.listen(PORT, () => console.log("Server is listening on http://localhost:3000"))
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: "*",
     methods: ['GET', 'POST']
   }
 })
@@ -48,7 +48,7 @@ app.post("/api/game", async (req, res) => {
   res.json(game)
 })
 
-app.get("/api/games", async (req, res) => {
+app.get("/api/games", async (_, res) => {
   const games = await api.getGames()
   res.json(games)
 })

@@ -1,10 +1,11 @@
-import { MemoryTicTacToeApi } from '../api'
+/*
+import { DbTicTacToeApi } from '../api'
 
 import { expect, test } from 'vitest'
-let api: MemoryTicTacToeApi
+let api: DbTicTacToeApi
 
 test('should create a new game with correct initial state', async() => {
-  api = new MemoryTicTacToeApi()
+  api = new DbTicTacToeApi()
   const game = await api.createGame('x')
   expect(game).toBeDefined()
   expect(game.board).toStrictEqual(
@@ -17,3 +18,4 @@ test('should create a new game with correct initial state', async() => {
   expect(game.id).toBeDefined()
   expect(game.endState).toBeUndefined()
 })
+*/

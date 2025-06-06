@@ -6,7 +6,10 @@ import type { TicTacToeApi } from '../api';
 import type { Player, Game, CellCoord, EndState, Board } from '../game/game';
 import { initializeGame, move } from '../game/game';
 
-const db = drizzle(process.env.DATABASE_URL!);
+
+const DATABASE_URL = process.env.DATABASE_URL
+if (!DATABASE_URL) throw Error("no DB url")
+const db = drizzle(DATABASE_URL);
 
 export class DbTicTacToeApi implements TicTacToeApi {
 

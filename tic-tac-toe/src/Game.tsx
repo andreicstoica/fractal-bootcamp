@@ -7,7 +7,8 @@ import { useSpring, animated } from "@react-spring/web";
 import clsx from "clsx";
 
 import type { Game, Player, CellCoord, EndState } from "./game/game";
-import { BASE_URL, ClientTicTacToe } from "./api";
+import { ClientTicTacToe } from "./api";
+import { CLIENT_URL } from "./constants"
 
 const centerStyle = "flex flex-col items-center justify-center";
 const hoverStyle =
@@ -39,7 +40,7 @@ export function Game() {
 
   const intervalId = useRef<NodeJS.Timeout | null>(null)
   useEffect(() => {
-    const socket = io(BASE_URL);
+    const socket = io(CLIENT_URL);
     //let intervalId: NodeJS.Timeout
     socket.on("connect", () => {
       socket.emit("join-game", game.id)
