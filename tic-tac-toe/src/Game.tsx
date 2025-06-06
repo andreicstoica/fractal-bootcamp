@@ -6,7 +6,7 @@ import { Howl, Howler } from "howler";
 import { useSpring, animated } from "@react-spring/web";
 import clsx from "clsx";
 
-import type { Game, Player, Cell, CellCoord, EndState } from "./game/game";
+import type { Game, Player, CellCoord, EndState } from "./game/game";
 import { BASE_URL, ClientTicTacToe } from "./api";
 
 const centerStyle = "flex flex-col items-center justify-center";
@@ -32,7 +32,8 @@ export function Game() {
   const [game, setGame] = useState<Game>(foundGame);
   const navigate = useNavigate();
 
-  const cellStyle = "border border-gray-500 bg-gray-200 font-[amarante] w-[3em] h-[3em] text-5xl";
+  const cellStyle = "outline outline-3 outline-zinc-500 bg-zinc-100 font-[amarante] w-40 h-40 text-7xl"
+  const cardStyle = 'p-4 border border-2 shadow-lg/100 shadow-black text-xl font-bold bg-zinc-100'
 
   useEffect(() => {
     const socket = io(BASE_URL);
@@ -63,8 +64,8 @@ export function Game() {
 
   return (
     <div className={clsx(centerStyle, "gap-12")}>
-      <div className={clsx("flex flex-col items-center font-[inter] gap-2")}>
-        <div className="text-3xl font-medium">Game: {game.name}</div>
+      <div className={clsx(cardStyle, "flex flex-col items-center gap-2")}>
+        <div className="text-2xl font-bold">Game: {game.name}</div>
         <Turn currentPlayer={game.currentPlayer} endState={game.endState} />
         <br></br>
       </div>
@@ -73,21 +74,22 @@ export function Game() {
         {game.board.map((row, rowIndex) => (
           <div key={rowIndex} className="flex flex-col">
             {row.map((cell, colIndex) => (
-              <animated.div
+              <div
                 key={colIndex}
                 className={clsx(
                   centerStyle,
                   hoverStyle,
                   cellStyle,
-                  { "text-sky-500": cell === "x" },
-                  { "text-rose-500": cell === "o" }
+                  { "text-emerald-500 hover:cursor-not-allowed": cell === "x" },
+                  { "text-red-500 hover:cursor-not-allowed": cell === "o" },
+                  { "hover:cursor-pointer": cell === null }
                 )}
                 onClick={() => {
                   clickSound.play();
                   handleClick({ row: rowIndex, col: colIndex });
                 }}>
                 <TicTacToeCell cell={cell} />
-              </animated.div>
+              </div>
             ))}
           </div>
         ))}
@@ -105,7 +107,7 @@ interface CellProp {
 function TicTacToeCell( { cell }: CellProp ) {
   const slamSprings = useSpring(
     cell ? 
-    { from: { scale: 1.5 }, to: { scale: 1 }, config: {mass: 3, friction: 20, tension: 110} }
+    { from: { scale: 1.5 }, to: { scale: 1 }, config: {mass: 3, friction: 20, tension: 500} }
     : {}
   );
 
@@ -123,13 +125,13 @@ interface TurnProps {
 
 function Turn({ currentPlayer, endState }: TurnProps) {
   const turnStyle = clsx(
-    { "text-sky-500": currentPlayer === "x" },
-    { "text-rose-500": currentPlayer === "o" },
+    { "text-emerald-500": currentPlayer === "x" },
+    { "text-red-500": currentPlayer === "o" },
     "font-[amarante]"
   );
   if (!endState)
     return (
-      <div className="text-2xl">
+      <div className="text-xl font-semibold">
         Player turn:{" "}
         <span className={turnStyle}>{currentPlayer.toUpperCase()}</span>
       </div>
@@ -145,14 +147,14 @@ interface GameOverProps {
 function GameOver({ endState, onRestart }: GameOverProps) {
   let message: JSX.Element | null = null;
   const winnerStyle = clsx(
-    { "text-sky-500": endState === "x" },
-    { "text-rose-500": endState === "o" },
+    { "text-emerald-500": endState === "x" },
+    { "text-red-500": endState === "o" },
     "font-[amarante] text-xl"
   );
 
   if (!endState) return null;
   if (endState === "tie") {
-    message = <div>Wow, what an exciting matchup, the game ends in a tie!</div>;
+    message = <div>Wow, what an exciting matchup! The game ends in a tie.</div>;
   } else {
     // If endState is 'x' or 'o', construct JSX for the winner message
     message = (
@@ -165,20 +167,19 @@ function GameOver({ endState, onRestart }: GameOverProps) {
   }
 
   const winnerElement = (
-    <div className="font-[inter] text-xl font-medium">{message}</div>
+    <div className="text-2xl font-bold">{message}</div>
   );
   victorySound.play();
-  const buttonStyle =
-    "py-2.5 px-5 my-3 text-l font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100";
+  const buttonStyle = 'py-3 px-4 text-xl font-medium shadow-md/100 shadow-zinc-500 bg-white border-2 border-r-5 border-b-5 border-zinc-black hover:cursor-pointer hover:border-r-2 hover:border-b-2 hover:bg-zinc-100 focus:text-amber-600 focus:bg-zinc-300'
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col items-center gap-5">
       {winnerElement}
       <button
         onClick={() => onRestart()}
-        className={clsx(buttonStyle, "animate-pulse")}
+        className={clsx(buttonStyle, "hover:cursor-pointer m-4 -rotate-8")}
       >
-        Play Again?
+        <span className="animate-pulse">Play Again?</span>
       </button>
     </div>
   );
