@@ -26,28 +26,32 @@ const victorySound = new Howl({
 });
 
 const api = new ClientTicTacToe();
+const cellStyle = "outline outline-3 outline-zinc-500 bg-zinc-100 active:bg-zinc-300 font-[amarante] w-40 h-40 text-7xl"
+const cardStyle = 'p-4 border border-2 shadow-lg/100 shadow-black text-xl font-bold bg-zinc-100'
+const buttonStyle = 'py-3 px-4 text-xl font-medium shadow-md/100 shadow-zinc-500 bg-white border-2 border-r-5 border-b-5 border-zinc-black hover:cursor-pointer hover:border-r-2 hover:border-b-2 hover:bg-zinc-100 focus:text-amber-600 focus:bg-zinc-300'
+
 
 export function Game() {
-  const { foundGame: foundGame } = useLoaderData<{ foundGame: Game }>();
-  const [game, setGame] = useState<Game>(foundGame);
-  const navigate = useNavigate();
-
-  const cellStyle = "outline outline-3 outline-zinc-500 bg-zinc-100 font-[amarante] w-40 h-40 text-7xl"
-  const cardStyle = 'p-4 border border-2 shadow-lg/100 shadow-black text-xl font-bold bg-zinc-100'
+  const { foundGame: foundGame } = useLoaderData<{ foundGame: Game }>()
+  const [game, setGame] = useState<Game>(foundGame)
+  const [aiAllowed, setAiAllowed] = useState<boolean>(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const socket = io(BASE_URL);
     socket.on("connect", () => {
-      socket.emit("join-game", game.id);
+      socket.emit("join-game", game.id)
 
       socket.on("game-updated", (game: Game) => {
-        //console.log('game updated')
-        setGame(game);
-      });
-    });
+        setAiAllowed(false)
+        setGame(game)
+        // start timer for AI next move button 
+        setInterval(() => setAiAllowed(true), 5000)
+      })
+    })
 
     return () => socket.disconnect();
-  }, [game.id]);
+  }, [game.id])
 
   async function handleClick(coords: CellCoord) {
     const newGame = await api.makeMove(game!.id, coords);
@@ -63,8 +67,8 @@ export function Game() {
   }
 
   return (
-    <div className={clsx(centerStyle, "gap-12")}>
-      <div className={clsx(cardStyle, "flex flex-col items-center gap-2")}>
+    <div className={clsx(centerStyle, "gap-6")}>
+      <div className={clsx(cardStyle, "flex flex-col items-center mt-4 mb-4")}>
         <div className="text-2xl font-bold">Game: {game.name}</div>
         <Turn currentPlayer={game.currentPlayer} endState={game.endState} />
         <br></br>
@@ -82,7 +86,7 @@ export function Game() {
                   cellStyle,
                   { "text-emerald-500 hover:cursor-not-allowed": cell === "x" },
                   { "text-red-500 hover:cursor-not-allowed": cell === "o" },
-                  { "hover:cursor-pointer": cell === null }
+                  { "hover:cursor-pointer": cell === null },
                 )}
                 onClick={() => {
                   clickSound.play();
@@ -95,9 +99,32 @@ export function Game() {
         ))}
       </div>
 
+      <AiButton aiAllowed={aiAllowed} game={game} handleClick={handleClick} />
       <GameOver endState={game.endState} onRestart={() => navigate(`/`)} />
     </div>
   );
+}
+
+interface AiButtonProp {
+  aiAllowed: boolean,
+  game: Game,
+  handleClick: Function
+}
+
+function AiButton({ aiAllowed, game, handleClick }: AiButtonProp) {
+  function aiMove(game: Game) {
+    for (let rowIndex = 0; rowIndex < game.board.length; rowIndex++) {
+      for (let colIndex = 0; colIndex < game.board[rowIndex].length; colIndex++) {
+        if (!game.board[rowIndex][colIndex]) {
+          return { row: rowIndex, col: colIndex }
+        }
+      }
+    }
+  }
+
+  return(
+    <button onClick={() => handleClick(aiMove(game)) } className={clsx(buttonStyle,  {"invisible": aiAllowed === false || game.endState })}>Let computer make the next move?</button>
+  )
 }
 
 interface CellProp {
@@ -168,12 +195,12 @@ function GameOver({ endState, onRestart }: GameOverProps) {
 
   const winnerElement = (
     <div className="text-2xl font-bold">{message}</div>
-  );
+  )
+
   victorySound.play();
-  const buttonStyle = 'py-3 px-4 text-xl font-medium shadow-md/100 shadow-zinc-500 bg-white border-2 border-r-5 border-b-5 border-zinc-black hover:cursor-pointer hover:border-r-2 hover:border-b-2 hover:bg-zinc-100 focus:text-amber-600 focus:bg-zinc-300'
 
   return (
-    <div className="flex flex-col items-center gap-5">
+    <div className="flex flex-col items-center">
       {winnerElement}
       <button
         onClick={() => onRestart()}
@@ -182,5 +209,5 @@ function GameOver({ endState, onRestart }: GameOverProps) {
         <span className="animate-pulse">Play Again?</span>
       </button>
     </div>
-  );
+  )
 }
