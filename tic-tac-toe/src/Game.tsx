@@ -62,8 +62,9 @@ export function Game() {
   const cellStyle = 'border border-gray-500 bg-gray-200 font-[amarante] w-[3em] h-[3em] text-5xl'
 
   return (
-    <div className={clsx(centerStyle, 'gap-20')}>
-      <div className={clsx('flex flex-col items-center font-[inter]')}> 
+    <div className={clsx(centerStyle, 'gap-12')}>
+      <div className={clsx('flex flex-col items-center font-[inter] gap-2')}> 
+        <div className="text-3xl font-medium">Game: {game.name}</div>
         <Turn currentPlayer={game.currentPlayer} endState={game.endState} />
         <br></br>
       </div>
@@ -99,7 +100,7 @@ interface TurnProps {
 
 function Turn({ currentPlayer, endState }: TurnProps) {
   const turnStyle = clsx({'text-sky-500': currentPlayer === 'x'}, {'text-rose-500': currentPlayer === 'o'}, 'font-[amarante]')
-  if (!endState) return(<div className='text-xl'>Player turn: <span className={turnStyle}>{currentPlayer.toUpperCase()}</span></div>)
+  if (!endState) return(<div className='text-2xl'>Player turn: <span className={turnStyle}>{currentPlayer.toUpperCase()}</span></div>)
 }
 
 interface GameOverProps {
