@@ -1,69 +1,69 @@
 import { useEffect, useState, type JSX } from "react";
 import { useLoaderData, useNavigate } from "react-router";
+import { io } from "socket.io-client";
 
-import { Howl, Howler } from 'howler'
+import { Howl, Howler } from "howler";
+import { useSpring, animated } from "@react-spring/web";
 import clsx from "clsx";
-import { io } from "socket.io-client"
 
-import type { Game, Player, CellCoord, EndState } from "./game/game";
+import type { Game, Player, Cell, CellCoord, EndState } from "./game/game";
 import { BASE_URL, ClientTicTacToe } from "./api";
 
-const centerStyle = 'flex flex-col items-center justify-center'
-const hoverStyle = 'hover:bg-gray-200 hover:shadow-[inset_1px_1px_10px_0px_#ffa1ad,inset_-1px_-1px_10px_0px_#ffa1ad]'
+const centerStyle = "flex flex-col items-center justify-center";
+const hoverStyle =
+  "hover:bg-gray-200 hover:shadow-[inset_1px_1px_10px_0px_#ffa1ad,inset_-1px_-1px_10px_0px_#ffa1ad]";
 
-Howler.volume(.75)
+Howler.volume(0.75);
 const clickSound = new Howl({
-  src: ['/assets/click.wav'],
+  src: ["/assets/click.wav"],
   html5: true,
-  preload: true
-})
+  preload: true,
+});
 const victorySound = new Howl({
-  src: ['/assets/victory.mp3'],
+  src: ["/assets/victory.mp3"],
   html5: true,
-  preload: true
-})
+  preload: true,
+});
 
-const api = new ClientTicTacToe()
+const api = new ClientTicTacToe();
 
 export function Game() {
-  const { foundGame: foundGame } = useLoaderData<{ foundGame: Game }>()
-  const [game, setGame] = useState<Game>(foundGame)
-  const navigate = useNavigate()
+  const { foundGame: foundGame } = useLoaderData<{ foundGame: Game }>();
+  const [game, setGame] = useState<Game>(foundGame);
+  const navigate = useNavigate();
+
+  const cellStyle = "border border-gray-500 bg-gray-200 font-[amarante] w-[3em] h-[3em] text-5xl";
 
   useEffect(() => {
     const socket = io(BASE_URL);
     socket.on("connect", () => {
-      //console.log('connected to socket')
-      socket.emit("join-game", game.id)
-      /*
-      socket.on('user-joined', (userId: string) => {
-        console.log(`user ${userId} joined`);
-      })
-      */
-      socket.on('game-updated', (game: Game) => {
+      socket.emit("join-game", game.id);
+
+      socket.on("game-updated", (game: Game) => {
         //console.log('game updated')
-        setGame(game)
-      })
+        setGame(game);
+      });
+    });
 
-    })
-
-    return () => socket.disconnect()
-  }, [game.id])
+    return () => socket.disconnect();
+  }, [game.id]);
 
   async function handleClick(coords: CellCoord) {
-    const newGame = await api.makeMove(game!.id, coords)
-    setGame(newGame)
+    const newGame = await api.makeMove(game!.id, coords);
+    setGame(newGame);
   }
 
   if (!game) {
-    return <div className={clsx(centerStyle, 'text-[amarante] text-6xl')}>Loading...</div>
+    return (
+      <div className={clsx(centerStyle, "text-[amarante] text-6xl")}>
+        Loading...
+      </div>
+    );
   }
 
-  const cellStyle = 'border border-gray-500 bg-gray-200 font-[amarante] w-[3em] h-[3em] text-5xl'
-
   return (
-    <div className={clsx(centerStyle, 'gap-12')}>
-      <div className={clsx('flex flex-col items-center font-[inter] gap-2')}> 
+    <div className={clsx(centerStyle, "gap-12")}>
+      <div className={clsx("flex flex-col items-center font-[inter] gap-2")}>
         <div className="text-3xl font-medium">Game: {game.name}</div>
         <Turn currentPlayer={game.currentPlayer} endState={game.endState} />
         <br></br>
@@ -73,16 +73,21 @@ export function Game() {
         {game.board.map((row, rowIndex) => (
           <div key={rowIndex} className="flex flex-col">
             {row.map((cell, colIndex) => (
-              <div
+              <animated.div
                 key={colIndex}
-                className={clsx(centerStyle, hoverStyle, cellStyle, {'text-sky-500': cell === 'x'}, {'text-rose-500': cell === 'o'})} 
+                className={clsx(
+                  centerStyle,
+                  hoverStyle,
+                  cellStyle,
+                  { "text-sky-500": cell === "x" },
+                  { "text-rose-500": cell === "o" }
+                )}
                 onClick={() => {
                   clickSound.play();
-                  handleClick({ row: rowIndex, col: colIndex })
-                }}
-              >
-                {cell ? cell.toUpperCase() : ""}
-              </div>
+                  handleClick({ row: rowIndex, col: colIndex });
+                }}>
+                <TicTacToeCell cell={cell} />
+              </animated.div>
             ))}
           </div>
         ))}
@@ -90,6 +95,24 @@ export function Game() {
 
       <GameOver endState={game.endState} onRestart={() => navigate(`/`)} />
     </div>
+  );
+}
+
+interface CellProp {
+  cell: 'x' | 'o' | null
+}
+
+function TicTacToeCell( { cell }: CellProp ) {
+  const slamSprings = useSpring(
+    cell ? 
+    { from: { scale: 1.5 }, to: { scale: 1 }, config: {mass: 3, friction: 20, tension: 110} }
+    : {}
+  );
+
+  return(
+    <animated.div style={slamSprings}>
+      {cell ? cell.toUpperCase() : ""}
+    </animated.div>
   )
 }
 
@@ -99,8 +122,18 @@ interface TurnProps {
 }
 
 function Turn({ currentPlayer, endState }: TurnProps) {
-  const turnStyle = clsx({'text-sky-500': currentPlayer === 'x'}, {'text-rose-500': currentPlayer === 'o'}, 'font-[amarante]')
-  if (!endState) return(<div className='text-2xl'>Player turn: <span className={turnStyle}>{currentPlayer.toUpperCase()}</span></div>)
+  const turnStyle = clsx(
+    { "text-sky-500": currentPlayer === "x" },
+    { "text-rose-500": currentPlayer === "o" },
+    "font-[amarante]"
+  );
+  if (!endState)
+    return (
+      <div className="text-2xl">
+        Player turn:{" "}
+        <span className={turnStyle}>{currentPlayer.toUpperCase()}</span>
+      </div>
+    );
 }
 
 interface GameOverProps {
@@ -110,37 +143,43 @@ interface GameOverProps {
 }
 
 function GameOver({ endState, onRestart }: GameOverProps) {
-  let message: JSX.Element | null = null
-  const winnerStyle = clsx({'text-sky-500': endState === 'x'}, {'text-rose-500': endState === 'o'}, 'font-[amarante] text-xl')
+  let message: JSX.Element | null = null;
+  const winnerStyle = clsx(
+    { "text-sky-500": endState === "x" },
+    { "text-rose-500": endState === "o" },
+    "font-[amarante] text-xl"
+  );
 
-  if (!endState) return null
-  if (endState === 'tie') {
+  if (!endState) return null;
+  if (endState === "tie") {
     message = <div>Wow, what an exciting matchup, the game ends in a tie!</div>;
   } else {
-  // If endState is 'x' or 'o', construct JSX for the winner message
+    // If endState is 'x' or 'o', construct JSX for the winner message
     message = (
       <div>
-        Congrats player{' '}
-        <span className={winnerStyle}>
-          {endState.toUpperCase()}
-        </span>
-        ! Player{' '}
-        <span className={winnerStyle}>
-          {endState.toUpperCase()}
-        </span>
-        {' '}wins!
+        Congrats player{" "}
+        <span className={winnerStyle}>{endState.toUpperCase()}</span>! Player{" "}
+        <span className={winnerStyle}>{endState.toUpperCase()}</span> wins!
       </div>
-    )
+    );
   }
 
-  const winnerElement = <div className="font-[inter] text-xl font-medium">{message}</div>
-  victorySound.play()
-  const buttonStyle = 'py-2.5 px-5 my-3 text-l font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100'
-  
-  return(
+  const winnerElement = (
+    <div className="font-[inter] text-xl font-medium">{message}</div>
+  );
+  victorySound.play();
+  const buttonStyle =
+    "py-2.5 px-5 my-3 text-l font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100";
+
+  return (
     <div className="flex flex-col">
       {winnerElement}
-      <button onClick={() => onRestart()} className={clsx(buttonStyle, 'animate-pulse')}>Play Again?</button>
+      <button
+        onClick={() => onRestart()}
+        className={clsx(buttonStyle, "animate-pulse")}
+      >
+        Play Again?
+      </button>
     </div>
-  )
+  );
 }
